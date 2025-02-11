@@ -4,16 +4,11 @@ import { NextResponse } from 'next/server'
 import { Diamond } from '@/data/model/diamond.schema'
 import { Category } from '@/data/model/category.schema'
 
-interface RouteParams {
-  params: {
-    slug: string
-  }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
+type tParams = Promise<{ slug: string[] }>
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, { params }: { params: tParams }) {
   try {
-    const { slug } = params
+    const { slug } = await params
 
     console.log('slug :==> ', slug)
 
