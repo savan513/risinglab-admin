@@ -236,6 +236,7 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
     formState: { errors }
   } = useForm<AddJewelleryData>({
     defaultValues: {
+      _id: '',
       category: '',
       jewelleryName: '',
       brand: '',
@@ -268,6 +269,7 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
   useEffect(() => {
     if (open && data) {
       reset({
+        _id: data._id || '',
         category: data.category || '',
         jewelleryName: data.jewelleryName || '',
         brand: data.brand || '',
@@ -280,6 +282,7 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
     } else if (open) {
       // Reset to initial values if no data provided
       reset({
+        _id: '',
         category: '',
         jewelleryName: '',
         brand: '',

@@ -66,6 +66,7 @@ type AddDiamondCategoryProps = {
 }
 
 const initialAddressData: AddDiamondCategoryProps['data'] = {
+  _id: '',
   diamondName: '',
   brand: '',
   color: '',
@@ -264,6 +265,7 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
   useEffect(() => {
     if (open && data) {
       reset({
+        _id: data._id || '',
         category: data.category || '',
         diamondName: data.diamondName || '',
         brand: data.brand || '',
@@ -280,6 +282,7 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
     } else if (open) {
       // Reset to initial values if no data provided
       reset({
+        _id: '',
         category: '',
         diamondName: '',
         brand: '',
