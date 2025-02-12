@@ -171,8 +171,7 @@ const Login = ({ mode }: { mode: SystemMode }) => {
           </div>
           <Alert icon={false} className='bg-[var(--mui-palette-primary-lightOpacity)]'>
             <Typography variant='body2' color='primary.main'>
-              Email: <span className='font-medium'>admin@risinglab.com</span> / Pass:{' '}
-              <span className='font-medium'>admin</span>
+              Please Enter Your Email and Password to Login
             </Typography>
           </Alert>
           <form
