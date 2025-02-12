@@ -2,6 +2,18 @@
 import CredentialProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
 import type { NextAuthOptions } from 'next-auth'
+import 'next-auth'
+
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string
+      name?: string | null
+      email?: string | null
+      image?: string | null
+    }
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   // ** Providers configuration
@@ -71,8 +83,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id
         token.name = user.name
-        token.email = user.email
-        token.role = user.role // Add custom fields as needed
+        token.email = user.email // Add custom fields as needed
       }
 
       return token
@@ -83,8 +94,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string
         session.user.name = token.name as string
-        session.user.email = token.email as string
-        session.user.role = token.role as string // Add custom fields as needed
+        session.user.email = token.email as string // Add custom fields as needed
       }
 
       return session
