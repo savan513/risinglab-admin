@@ -26,6 +26,8 @@ import type { InferInput } from 'valibot'
 import classnames from 'classnames'
 
 // Type Imports
+import { toast } from 'react-toastify'
+
 import type { SystemMode } from '@core/types'
 
 // Component Imports
@@ -110,7 +112,7 @@ const Login = ({ mode }: { mode: SystemMode }) => {
   } = useForm<FormData>({
     resolver: valibotResolver(schema),
     defaultValues: {
-      email: '',
+      email: 'admin@risinglab.com',
       password: ''
     }
   })
@@ -132,6 +134,8 @@ const Login = ({ mode }: { mode: SystemMode }) => {
       redirect: false
     })
 
+    console.log('res :==> ', res)
+
     if (res && res.ok && res.error === null) {
       // Vars
       const redirectURL = searchParams.get('redirectTo') ?? '/home'
@@ -140,9 +144,11 @@ const Login = ({ mode }: { mode: SystemMode }) => {
       router.replace(getLocalizedUrl(redirectURL))
     } else {
       if (res?.error) {
-        const error = JSON.parse(res.error)
+        toast.error(res?.error)
 
-        setErrorState(error)
+        // const error = JSON.parse(res.error)
+
+        // setErrorState(error)
       }
     }
   }

@@ -20,7 +20,9 @@ const connectDB = async () => {
   try {
     const connection = await mongoose.connect(MONGODB_URI, {
       dbName: 'rising_admin',
-      bufferCommands: false
+      bufferCommands: false,
+      connectTimeoutMS: 30000, // Increase timeout
+      serverSelectionTimeoutMS: 30000
     })
 
     console.log('Connected')

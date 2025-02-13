@@ -4,12 +4,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import categorySlice from '@/redux-store/slices/categorySlice'
 import diamondSlice from '@/redux-store/slices/diamondSlice'
 import jewllerySlice from '@/redux-store/slices/jewellerySlice'
+import contactSlice from './slices/contactSlice'
 
 export const store = configureStore({
   reducer: {
     categorySlice,
     diamondSlice,
-    jewllerySlice
+    jewllerySlice,
+    contactSlice
   }
 })
 
