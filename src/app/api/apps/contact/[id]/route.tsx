@@ -3,7 +3,9 @@ import { NextResponse } from 'next/server'
 
 import { Contact } from '@/data/model/contact.schema'
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+type tParams = { id: string }
+
+export async function PATCH(request: NextRequest, { params }: { params: tParams }) {
   try {
     const body = await request.json()
     const { status } = body
