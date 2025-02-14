@@ -15,6 +15,8 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Alert from '@mui/material/Alert'
+import Backdrop from '@mui/material/Backdrop'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // Third-party Imports
 import { signIn } from 'next-auth/react'
@@ -88,10 +90,12 @@ const Login = ({ mode }: { mode: SystemMode }) => {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [errorState, setErrorState] = useState<ErrorType | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Vars
   const darkImg = '/images/pages/auth-mask-dark.png'
   const lightImg = '/images/pages/auth-mask-light.png'
+
   const darkIllustration = '/images/illustrations/auth/v2-login-dark.png'
   const lightIllustration = '/images/illustrations/auth/v2-login-light.png'
   const borderedDarkIllustration = '/images/illustrations/auth/v2-login-dark-border.png'
@@ -128,28 +132,36 @@ const Login = ({ mode }: { mode: SystemMode }) => {
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
-    const res = await signIn('credentials', {
-      email: data.email,
-      password: data.password,
-      redirect: false
-    })
+    try {
+      setIsLoading(true)
 
-    console.log('res :==> ', res)
+      const res = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false
+      })
 
-    if (res && res.ok && res.error === null) {
-      // Vars
-      const redirectURL = searchParams.get('redirectTo') ?? '/home'
+      if (res && res.ok && res.error === null) {
+        const redirectURL = searchParams.get('redirectTo') ?? '/home'
 
-      router.replace(redirectURL)
-      router.replace(getLocalizedUrl(redirectURL))
-    } else {
-      if (res?.error) {
+        // Show loading for at least 1 second
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        // Use push instead of replace for more reliable navigation
+        router.push(getLocalizedUrl(redirectURL))
+
+        // Keep loading until navigation completes
+        await new Promise(resolve => setTimeout(resolve, 500))
+      } else if (res?.error) {
         toast.error(res?.error)
-
-        // const error = JSON.parse(res.error)
-
-        // setErrorState(error)
       }
+    } catch (error) {
+      toast.error('An error occurred during login')
+    } finally {
+      // Don't hide loading until after navigation starts
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 500)
     }
   }
 
@@ -278,6 +290,16 @@ const Login = ({ mode }: { mode: SystemMode }) => {
           </form>
         </div>
       </div>
+      <Backdrop
+        sx={{
+          color: '#fff',
+          zIndex: theme => theme.zIndex.drawer + 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        }}
+        open={isLoading}
+      >
+        <CircularProgress color='primary' />
+      </Backdrop>
     </div>
   )
 }

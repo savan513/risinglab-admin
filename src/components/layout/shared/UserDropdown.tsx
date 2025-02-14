@@ -40,6 +40,7 @@ const BadgeContentSpan = styled('span')({
 const UserDropdown = () => {
   // States
   const [open, setOpen] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   // Refs
   const anchorRef = useRef<HTMLDivElement>(null)
@@ -66,14 +67,26 @@ const UserDropdown = () => {
   }
 
   const handleUserLogout = async () => {
-    // Redirect to login page
+    setIsLoggingOut(true)
+    toast.info('Signing out...', { autoClose: false, toastId: 'signout' })
+
     try {
-      // Sign out from the app
-      await signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL })
+      // Add a small delay to ensure loading state is visible
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      // Initiate sign out
+      await signOut({
+        callbackUrl: process.env.NEXT_PUBLIC_APP_URL,
+        redirect: true
+      })
     } catch (error) {
       console.error(error)
       toast.error((error as Error).message)
+      setIsLoggingOut(false)
     }
+
+    // Note: Removed finally block since we want to keep loading state during redirect
+    // The loading state will naturally clear when the page redirects
   }
 
   return (
@@ -143,11 +156,14 @@ const UserDropdown = () => {
                       variant='contained'
                       color='error'
                       size='small'
-                      endIcon={<i className='tabler-logout' />}
+                      disabled={isLoggingOut}
+                      endIcon={
+                        isLoggingOut ? <i className='tabler-loader animate-spin' /> : <i className='tabler-logout' />
+                      }
                       onClick={handleUserLogout}
                       sx={{ '& .MuiButton-endIcon': { marginInlineStart: 1.5 } }}
                     >
-                      Logout
+                      {isLoggingOut ? 'Logging out...' : 'Logout'}
                     </Button>
                   </div>
                 </MenuList>
