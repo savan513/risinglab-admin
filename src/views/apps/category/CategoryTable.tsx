@@ -62,7 +62,7 @@ export type categoryType = {
   _id?: any
   category?: string
   name?: string
-  parent?: string
+  parent?: any
   slug?: string
 }
 
@@ -171,7 +171,7 @@ const CategoryTable = () => {
     }
   }
 
-  const columns = useMemo<ColumnDef<CategoryWithActionsType, any>[]>(
+  const columns = useMemo<ColumnDef<any, any>[]>(
     () => [
       columnHelper.accessor('category', {
         header: 'Category',
@@ -191,7 +191,7 @@ const CategoryTable = () => {
       }),
       columnHelper.accessor('parent', {
         header: 'Parent',
-        cell: ({ row }) => <Typography>{row.original.parent || '-'}</Typography>
+        cell: ({ row }) => <Typography>{row.original.parent.name || '-'}</Typography>
       }),
       columnHelper.accessor('actions', {
         header: 'Actions',

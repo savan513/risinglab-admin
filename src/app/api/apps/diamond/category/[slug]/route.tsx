@@ -20,7 +20,9 @@ export async function GET(request: NextRequest, { params }: { params: tParams })
     }
 
     // Then find all diamonds that belong to this category
-    const diamonds = await Diamond.find({ category: category._id }).populate('category').sort({ createdAt: -1 })
+    const diamonds = await Diamond.find({ category: category._id, status: 'active' })
+      .populate('category')
+      .sort({ createdAt: -1 })
 
     return NextResponse.json(diamonds)
   } catch (error) {

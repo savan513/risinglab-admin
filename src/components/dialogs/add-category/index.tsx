@@ -11,6 +11,7 @@ import DialogActions from '@mui/material/DialogActions'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid2'
+import MenuItem from '@mui/material/MenuItem'
 
 // Third-party Imports
 
@@ -103,7 +104,7 @@ const AddCategory = ({ open, setOpen, data }: AddCategoryProps) => {
       // Reset form data
       reset({
         name: data.name || '',
-        parent: data.parent || '',
+        parent: data.parent.name || '',
         slug: data.slug || ''
       })
 
@@ -111,7 +112,7 @@ const AddCategory = ({ open, setOpen, data }: AddCategoryProps) => {
       setCategoryData({
         _id: data._id || '',
         name: data.name || '',
-        parent: data.parent || '',
+        parent: data.parent.name || '',
         slug: data.slug || '',
         images: data.images || [] // This will set the existing images
       })
@@ -232,7 +233,10 @@ const AddCategory = ({ open, setOpen, data }: AddCategoryProps) => {
                 name='parent'
                 control={control}
                 render={({ field }) => (
-                  <CustomTextField fullWidth label='Parent' variant='outlined' placeholder='Parent' {...field} />
+                  <CustomTextField select fullWidth label='Parent' variant='outlined' placeholder='Parent' {...field}>
+                    <MenuItem value='Diamond'>Diamond</MenuItem>
+                    <MenuItem value='Jewellery'>Jewellery</MenuItem>
+                  </CustomTextField>
                 )}
               />
             </Grid>

@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 import type { TextFieldProps } from '@mui/material/TextField'
 import type { ButtonProps } from '@mui/material/Button'
+import Switch from '@mui/material/Switch'
 
 // Third-party Imports
 import classnames from 'classnames'
@@ -37,6 +38,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Box, CircularProgress } from '@mui/material'
 
 import Swal from 'sweetalert2'
+import { toast } from 'react-toastify'
 
 import CustomTextField from '@core/components/mui/TextField'
 import TablePaginationComponent from '@components/TablePaginationComponent'
@@ -48,7 +50,7 @@ import OpenDialogOnElementClick from '@/components/dialogs/OpenDialogOnElementCl
 // Component Imports
 import AddJewellery from '@components/dialogs/add-jewellery'
 import type { AppDispatch, RootState } from '@/redux-store/store'
-import { deleteJewellery, fetchJewelleries } from '@/redux-store/slices/jewellerySlice'
+import { deleteJewellery, fetchJewelleries, updateJewellery } from '@/redux-store/slices/jewellerySlice'
 import { fetchCategories } from '@/redux-store/slices/categorySlice'
 
 declare module '@tanstack/table-core' {
@@ -72,6 +74,7 @@ export type categoryType = {
   price: number
   image: any
   images: any
+  status?: any
 }
 
 type CategoryWithActionsType = categoryType & {
@@ -284,6 +287,21 @@ const JewelleryTable = () => {
     }
   }
 
+  const handleStatusToggle = async (id: string, currentStatus: string) => {
+    try {
+      const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
+
+      await dispatch(
+        updateJewellery({
+          id,
+          formData: { status: newStatus }
+        })
+      ).unwrap()
+    } catch (error) {
+      toast.error('Failed to update status')
+    }
+  }
+
   const columns = useMemo<ColumnDef<CategoryWithActionsType, any>[]>(
     () => [
       {
@@ -349,6 +367,19 @@ const JewelleryTable = () => {
         header: 'Price',
         cell: ({ row }) => (
           <Typography>{row.original.price.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</Typography>
+        )
+      }),
+      columnHelper.accessor('status', {
+        header: 'Status',
+        cell: ({ row }) => (
+          <div className='flex items-center'>
+            <Switch
+              checked={row.original.status === 'active'}
+              onChange={() => handleStatusToggle(row.original._id, row.original.status)}
+              color='success'
+            />
+            <Typography className='mis-2 capitalize'>{row.original.status || 'active'}</Typography>
+          </div>
         )
       }),
       columnHelper.accessor('actions', {

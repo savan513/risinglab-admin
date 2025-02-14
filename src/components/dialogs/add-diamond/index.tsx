@@ -199,12 +199,13 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
   const dispatch = useDispatch<AppDispatch>()
 
   // Useselector
-  const { loading } = useSelector((state: RootState) => ({
-    loading: state.diamondSlice.loading
+  const { loading, fetchCategoriesData } = useSelector((state: RootState) => ({
+    loading: state.diamondSlice.loading,
+    fetchCategoriesData: state.categorySlice.fetchCategoriesData
   }))
 
   useEffect(() => {
-    if (open && categoryData.length === 0) {
+    if (open) {
       const filter = { parent: '67a11386f8bba178b89e62c4' }
 
       dispatch(fetchCategories(filter)).then(res => {
@@ -298,6 +299,12 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
       })
     }
   }, [open, data, reset])
+
+  useEffect(() => {
+    if (fetchCategoriesData.length > 0) {
+      setCategoryData(fetchCategoriesData)
+    }
+  }, [fetchCategoriesData])
 
   useEffect(() => {
     if (editor && data?.description) {

@@ -22,7 +22,9 @@ export async function GET(request: NextRequest, { params }: { params: tParams })
     }
 
     // Then find all jewellerys that belong to this category
-    const Jewellerys = await Jewellery.find({ category: category._id }).populate('category').sort({ createdAt: -1 })
+    const Jewellerys = await Jewellery.find({ category: category._id, status: 'active' })
+      .populate('category')
+      .sort({ createdAt: -1 })
 
     return NextResponse.json(Jewellerys)
   } catch (error) {

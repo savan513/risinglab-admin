@@ -60,7 +60,7 @@ type AddJewelleryData = {
   jewelleryName?: string
   brand?: string
   color?: string
-  size?: string
+  size?: any
   sku?: string
   price?: string
   shape?: string
@@ -80,7 +80,7 @@ const initialAddressData: AddJewelleryProps['data'] = {
   jewelleryName: '',
   brand: '',
   color: '',
-  size: '',
+  size: [],
   sku: '',
   price: '',
   description: '',
@@ -211,7 +211,7 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
   }))
 
   useEffect(() => {
-    if (open && categoryData.length === 0) {
+    if (open) {
       const filter = { parent: '67a11573f8bba178b89e62c9' }
 
       dispatch(fetchCategories(filter)).then(res => {
@@ -241,7 +241,7 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
       jewelleryName: '',
       brand: '',
       color: '',
-      size: '',
+      size: [],
       sku: '',
       price: '',
       description: data?.description || ''
@@ -274,7 +274,7 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
         jewelleryName: data.jewelleryName || '',
         brand: data.brand || '',
         color: data.color || '',
-        size: data.size || '',
+        size: typeof data.size === 'string' ? data.size.split(',') : Array.isArray(data.size) ? data.size : [],
         sku: data.sku || '',
         price: data.price || '',
         description: data.description || ''
@@ -287,7 +287,7 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
         jewelleryName: '',
         brand: '',
         color: '',
-        size: '',
+        size: [],
         sku: '',
         price: '',
         description: ''
@@ -300,7 +300,6 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
       setCategoryData(fetchCategoriesData)
     }
   }, [fetchCategoriesData])
-  console.log('fetchCategoriesData :==> ', fetchCategoriesData)
 
   useEffect(() => {
     if (editor && data?.description) {
@@ -384,6 +383,23 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
             <i className='tabler-x' />
           </DialogCloseButton>
           <Grid container spacing={6}>
+            <Grid size={{ xs: 12, sm: 12 }}>
+              <Controller
+                name='jewelleryName'
+                rules={{ required: true }}
+                control={control}
+                render={({ field }) => (
+                  <CustomTextField
+                    fullWidth
+                    label='Jewellery Name'
+                    variant='outlined'
+                    placeholder='Bracelet'
+                    {...field}
+                    {...(errors.jewelleryName && { error: true, helperText: 'This field is required.' })}
+                  />
+                )}
+              />
+            </Grid>
             <Grid size={{ xs: 12, sm: 4 }}>
               <Controller
                 name='category'
@@ -408,22 +424,48 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
               />
               {errors.shape && <FormHelperText error>This field is required.</FormHelperText>}
             </Grid>
+
             <Grid size={{ xs: 12, sm: 4 }}>
               <Controller
-                name='jewelleryName'
-                rules={{ required: true }}
+                name='color'
                 control={control}
+                rules={{ required: true }}
                 render={({ field }) => (
                   <CustomTextField
+                    select
                     fullWidth
-                    label='Jewellery Name'
+                    label='Color'
                     variant='outlined'
-                    placeholder='Bracelet'
                     {...field}
-                    {...(errors.jewelleryName && { error: true, helperText: 'This field is required.' })}
-                  />
+                    error={Boolean(errors.color)}
+                  >
+                    {[
+                      { label: 'Red', value: 'red' },
+                      { label: 'Blue', value: 'blue' },
+                      { label: 'Green', value: 'green' },
+                      { label: 'Yellow', value: 'yellow' },
+                      { label: 'Black', value: 'black' },
+                      { label: 'White', value: 'white' },
+                      { label: 'Pink', value: 'pink' }
+                    ].map((color, index) => (
+                      <MenuItem key={index} value={color.value}>
+                        <span className='flex items-center gap-2'>
+                          <span
+                            className='w-4 h-4 rounded-full'
+                            style={{
+                              backgroundColor: color.value,
+                              display: 'inline-block',
+                              border: '1px solid #ddd'
+                            }}
+                          />
+                          <span style={{ textTransform: 'capitalize' }}>{color.label}</span>
+                        </span>
+                      </MenuItem>
+                    ))}
+                  </CustomTextField>
                 )}
               />
+              {errors.color && <FormHelperText error>This field is required.</FormHelperText>}
             </Grid>
             <Grid size={{ xs: 12, sm: 4 }}>
               <Controller
@@ -442,60 +484,6 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12 }}>
-              <FormControl component='fieldset'>
-                <FormLabel component='legend' error={Boolean(errors.color)}>
-                  Select Color
-                </FormLabel>
-                <Controller
-                  name='color'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field }) => (
-                    <RadioGroup row {...field}>
-                      {[
-                        { label: 'Red', value: 'red' },
-                        { label: 'Blue', value: 'blue' },
-                        { label: 'Green', value: 'green' },
-                        { label: 'Yellow', value: 'yellow' },
-                        { label: 'Black', value: 'black' },
-                        { label: 'White', value: 'white' },
-                        { label: 'Pink', value: 'pink' }
-                      ].map((color, index) => (
-                        <FormControlLabel
-                          key={index}
-                          value={color.value}
-                          control={
-                            <Radio
-                              sx={{
-                                color: color.value,
-                                '&.Mui-checked': {
-                                  color: color.value
-                                }
-                              }}
-                            />
-                          }
-                          label={
-                            <span className='flex items-center gap-2' style={{ textTransform: 'capitalize' }}>
-                              <span
-                                className='w-4 h-4 rounded-full'
-                                style={{
-                                  backgroundColor: color.value,
-                                  display: 'inline-block',
-                                  border: '1px solid #ddd'
-                                }}
-                              ></span>
-                              {color.label}
-                            </span>
-                          }
-                        />
-                      ))}
-                    </RadioGroup>
-                  )}
-                />
-                {errors.color && <FormHelperText error>This field is required.</FormHelperText>}
-              </FormControl>
-            </Grid>
             <Grid size={{ xs: 4 }}>
               <Controller
                 name='size'
@@ -507,6 +495,11 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
                     fullWidth
                     label='Size'
                     variant='outlined'
+                    SelectProps={{
+                      multiple: true,
+                      value: Array.isArray(field.value) ? field.value : [],
+                      renderValue: (selected: any) => (Array.isArray(selected) ? selected.join(', ') : selected)
+                    }}
                     {...field}
                     error={Boolean(errors.size)}
                   >
@@ -568,8 +561,8 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
                     render={({ field }) => (
                       <EditorContent
                         editor={editor}
-                        className='bs-[135px] overflow-y-auto flex '
-                        {...field} // Passing the field from react-hook-form to the EditorContent
+                        className='bs-[135px] overflow-y-auto flex [&_.ProseMirror]:border-0 [&_.ProseMirror]:outline-none'
+                        {...field}
                       />
                     )}
                   />
