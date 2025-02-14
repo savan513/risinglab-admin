@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 
 import { Contact } from '@/data/model/contact.schema'
+import connectDB from '@/libs/db'
 
 // Create transporter outside the handler to reuse it
 const transporter = nodemailer.createTransport({
@@ -17,22 +18,25 @@ const transporter = nodemailer.createTransport({
 
 export async function POST(req: NextRequest) {
   try {
+    await connectDB()
+
     const body = await req.json()
     const { name, email, phone, subject, message } = body
 
     console.log('contact :==> ', name, email, phone, subject, message)
 
-    // Save to database
-    const contact = await Contact.create({
+    // Create new contact with status
+    const contact = new Contact({
       name,
       email,
       phone,
       subject,
-      message
+      message,
+      status: 'pending' // Set default status
     })
 
-    console.log('contact :==> ', contact)
-    contact.save()
+    // Save to database
+    await contact.save()
 
     // Email content
     const mailOptions = {
@@ -40,31 +44,35 @@ export async function POST(req: NextRequest) {
       to: process.env.ADMIN_EMAIL,
       subject: `Contact Form: ${subject}`,
       html: `
-                <h2>New Contact Form Submission</h2>
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Subject:</strong> ${subject}</p>
-                <p><strong>Message:</strong></p>
-                <p>${message}</p>
-            `
+        <h2>New Contact Form Submission</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Subject:</strong> ${subject}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message}</p>
+      `
     }
 
     // Send email
-    await transporter.sendMail(mailOptions)
+    if (process.env.EMAIL_USER && process.env.ADMIN_EMAIL) {
+      await transporter.sendMail(mailOptions)
+    }
 
     return NextResponse.json(
       {
         message: 'Contact form submitted successfully',
         contact
       },
-      { status: 200 }
+      { status: 201 }
     )
-  } catch (error) {
+  } catch (error: any) {
     console.error('Contact form error:', error)
 
     return NextResponse.json(
       {
-        message: 'Failed to process contact form'
+        message: 'Failed to process contact form',
+        error: error.message
       },
       { status: 500 }
     )
@@ -74,17 +82,14 @@ export async function POST(req: NextRequest) {
 // Add GET endpoint to fetch contacts
 export async function GET() {
   try {
+    await connectDB()
+
     const contacts = await Contact.find().sort({ createdAt: -1 })
 
     return NextResponse.json(contacts)
   } catch (error) {
     console.error('Error fetching contacts:', error)
 
-    return NextResponse.json(
-      {
-        message: 'Failed to fetch contacts'
-      },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch contacts' }, { status: 500 })
   }
 }
