@@ -32,6 +32,8 @@ import { Controller, useForm } from 'react-hook-form'
 
 import { useDispatch, useSelector } from 'react-redux'
 
+import CreatableSelect from 'react-select/creatable'
+
 import type { CustomInputVerticalData } from '@core/components/custom-inputs/types'
 
 // Component Imports
@@ -385,6 +387,23 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
             <i className='tabler-x' />
           </DialogCloseButton>
           <Grid container spacing={6}>
+            <Grid size={{ xs: 12 }}>
+              <Controller
+                name='diamondName'
+                rules={{ required: true }}
+                control={control}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    fullWidth
+                    placeholder='Diamond Name'
+                    label='Diamond Name'
+                    variant='outlined'
+                    {...(errors.diamondName && { error: true, helperText: 'This field is required.' })}
+                  />
+                )}
+              />
+            </Grid>
             <Grid size={{ xs: 4 }}>
               <Controller
                 name='category'
@@ -408,23 +427,6 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
                 )}
               />
               {errors.shape && <FormHelperText error>This field is required.</FormHelperText>}
-            </Grid>
-            <Grid size={{ xs: 4 }}>
-              <Controller
-                name='diamondName'
-                rules={{ required: true }}
-                control={control}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    placeholder='Diamond Name'
-                    label='Diamond Name'
-                    variant='outlined'
-                    {...(errors.diamondName && { error: true, helperText: 'This field is required.' })}
-                  />
-                )}
-              />
             </Grid>
             <Grid size={{ xs: 4 }}>
               <Controller
@@ -534,35 +536,47 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
                 rules={{ required: true }}
                 control={control}
                 render={({ field }) => (
-                  <CustomTextField
-                    select
-                    fullWidth
-                    label='Diamond Shape'
-                    variant='outlined'
-                    {...field}
-                    error={Boolean(errors.shape)}
-                  >
-                    {[
-                      'Round',
-                      'Princess',
-                      'Emerland',
-                      'Marquise',
-                      'Pear',
-                      'Heart',
-                      'Radient',
-                      'Cushion',
-                      'Oval',
-                      'Asscher',
-                      'Calf'
-                    ].map((shape, index) => (
-                      <MenuItem key={index} value={shape}>
-                        {shape}
-                      </MenuItem>
-                    ))}
-                  </CustomTextField>
+                  <>
+                    <Typography component='label' className='block text-textPrimary' sx={{ fontSize: '0.800rem' }}>
+                      Shape
+                    </Typography>
+                    <CreatableSelect
+                      isClearable
+                      value={field.value ? { label: field.value, value: field.value } : null}
+                      onChange={(newValue: any) => field.onChange(newValue?.value || '')}
+                      options={[
+                        { value: 'Round', label: 'Round' },
+                        { value: 'Princess', label: 'Princess' },
+                        { value: 'Emerland', label: 'Emerland' },
+                        { value: 'Marquise', label: 'Marquise' },
+                        { value: 'Pear', label: 'Pear' },
+                        { value: 'Heart', label: 'Heart' },
+                        { value: 'Radient', label: 'Radient' },
+                        { value: 'Cushion', label: 'Cushion' },
+                        { value: 'Oval', label: 'Oval' },
+                        { value: 'Asscher', label: 'Asscher' },
+                        { value: 'Calf', label: 'Calf' }
+                      ]}
+                      styles={{
+                        control: (base: any, state: any) => ({
+                          ...base,
+                          minHeight: '40px',
+                          borderColor: errors.shape ? '#FF4C51' : state.isFocused ? '#7367F0' : '#E4E4E4',
+                          '&:hover': {
+                            borderColor: '#7367F0'
+                          }
+                        }),
+                        placeholder: (base: any) => ({
+                          ...base,
+                          color: '#999'
+                        })
+                      }}
+                      placeholder='Select or type shape...'
+                    />
+                    {errors.shape && <FormHelperText error>This field is required.</FormHelperText>}
+                  </>
                 )}
               />
-              {errors.shape && <FormHelperText error>This field is required.</FormHelperText>}
             </Grid>
             <Grid size={{ xs: 4 }}>
               <Controller
@@ -587,7 +601,17 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
                 <CardContent className='p-0'>
                   <EditorToolbar editor={editor} />
                   <Divider className='mli-6' />
-                  <EditorContent editor={editor} className='bs-[135px] overflow-y-auto flex ' />
+                  <Controller
+                    name='description'
+                    control={control}
+                    render={({ field }) => (
+                      <EditorContent
+                        editor={editor}
+                        className='bs-[135px] overflow-y-auto flex [&_.ProseMirror]:border-0 [&_.ProseMirror]:outline-none'
+                        {...field}
+                      />
+                    )}
+                  />
                 </CardContent>
               </Card>
             </Grid>

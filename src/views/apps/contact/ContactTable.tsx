@@ -29,6 +29,7 @@ import Menu from '@mui/material/Menu'
 import { toast } from 'react-toastify'
 import Backdrop from '@mui/material/Backdrop'
 import { useTheme } from '@mui/material/styles'
+import Tooltip from '@mui/material/Tooltip'
 
 import { TablePagination, type TextFieldProps } from '@mui/material'
 
@@ -159,9 +160,11 @@ const ContactTable = () => {
       columnHelper.accessor('message', {
         header: 'Message',
         cell: ({ row }) => (
-          <Typography sx={{ maxWidth: '200px' }} className='truncate'>
-            {row.original.message}
-          </Typography>
+          <Tooltip title={row.original.message} arrow>
+            <Typography sx={{ maxWidth: '200px' }} className='truncate'>
+              {row.original.message}
+            </Typography>
+          </Tooltip>
         )
       }),
       columnHelper.accessor('status', {
