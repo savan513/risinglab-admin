@@ -374,7 +374,7 @@ const Customizer = ({ breakpoint = 'lg', dir = 'ltr', disableDirection = false }
                       Collapsed
                     </p>
                   </div>
-                  <div className='flex flex-col items-start gap-0.5'>
+                  {/* <div className='flex flex-col items-start gap-0.5'>
                     <div
                       className={classnames(styles.itemWrapper, { [styles.active]: settings.layout === 'horizontal' })}
                       onClick={() => handleChange('layout', 'horizontal')}
@@ -384,7 +384,7 @@ const Customizer = ({ breakpoint = 'lg', dir = 'ltr', disableDirection = false }
                     <p className={styles.itemLabel} onClick={() => handleChange('layout', 'horizontal')}>
                       Horizontal
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className='flex flex-col gap-2'>
@@ -457,7 +457,7 @@ const Customizer = ({ breakpoint = 'lg', dir = 'ltr', disableDirection = false }
                         </p>
                       </div>
                     </Link>
-                    <Link href={getLocalePath(pathName, 'ar')}>
+                    {/* <Link href={getLocalePath(pathName, 'ar')}>
                       <div className='flex flex-col items-start gap-0.5'>
                         <div
                           className={classnames(styles.itemWrapper, {
@@ -471,7 +471,7 @@ const Customizer = ({ breakpoint = 'lg', dir = 'ltr', disableDirection = false }
                           (Arabic)
                         </p>
                       </div>
-                    </Link>
+                    </Link> */}
                   </div>
                 </div>
               )}
