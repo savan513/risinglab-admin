@@ -51,6 +51,7 @@ type AddDiamondCategoryData = {
   brand?: string
   color?: string
   size?: string
+  p_description?: any
   description?: any
   images?: any
   diamondType?: string
@@ -73,6 +74,7 @@ const initialAddressData: AddDiamondCategoryProps['data'] = {
   brand: '',
   color: '',
   size: '',
+  p_description: '',
   description: '',
   images: [],
   diamondType: '',
@@ -237,6 +239,7 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
       brand: '',
       color: '',
       size: '',
+      p_description: data?.p_description || '',
       description: data?.description || '',
       diamondType: '',
       weight: '',
@@ -264,6 +267,24 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
     }
   })
 
+  const editor2: any = useEditor({
+    extensions: [
+      StarterKit,
+      Placeholder.configure({
+        placeholder: 'Write something here...'
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph']
+      }),
+      Underline
+    ],
+    immediatelyRender: false,
+    content: data?.p_description || '<p>Write your description here...</p>',
+    onUpdate: ({ editor }) => {
+      setValue('p_description', editor.getHTML())
+    }
+  })
+
   useEffect(() => {
     if (open && data) {
       reset({
@@ -273,6 +294,7 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
         brand: data.brand || '',
         color: data.color || '',
         size: data.size || '',
+        p_description: data.p_description || '',
         description: data.description || '',
         diamondType: data.diamondType || '',
         weight: data.weight || '',
@@ -289,6 +311,7 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
         brand: '',
         color: '',
         size: '',
+        p_description: '',
         description: '',
         diamondType: '',
         weight: '',
@@ -311,8 +334,13 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
       setValue('description', data.description)
     }
 
+    if (editor2 && data?.p_description) {
+      editor2.commands.setContent(data.p_description)
+      setValue('p_description', data.p_description)
+    }
+
     // return () => editor?.off('update'); // Clean up the event listener
-  }, [editor, data, setValue])
+  }, [editor, editor2, data, setValue])
 
   const onSubmit: SubmitHandler<any> = async (formData: any) => {
     try {
@@ -596,6 +624,26 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
               />
             </Grid>
             <Grid size={{ xs: 12 }}>
+              <Typography className='mbe-1'>Primary Description (Optional)</Typography>
+              <Card className='p-0 border shadow-none'>
+                <CardContent className='p-0'>
+                  <EditorToolbar editor={editor2} />
+                  <Divider className='mli-6' />
+                  <Controller
+                    name='p_description'
+                    control={control}
+                    render={({ field }) => (
+                      <EditorContent
+                        editor={editor2}
+                        className='bs-[135px] overflow-y-auto flex [&_.ProseMirror]:border-0 [&_.ProseMirror]:outline-none'
+                        {...field}
+                      />
+                    )}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid size={{ xs: 12 }}>
               <Typography className='mbe-1'>Description (Optional)</Typography>
               <Card className='p-0 border shadow-none'>
                 <CardContent className='p-0'>
@@ -607,7 +655,7 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
                     render={({ field }) => (
                       <EditorContent
                         editor={editor}
-                        className='bs-[135px] overflow-y-auto flex [&_.ProseMirror]:border-0 [&_.ProseMirror]:outline-none'
+                        className='bs-[135px] overflow-y-auto flex [&_.ProseMirror]:border-0 [&_.ProseMirror]:outline-none w-full'
                         {...field}
                       />
                     )}

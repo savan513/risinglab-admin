@@ -11,6 +11,7 @@ const diamondSchema = new mongoose.Schema(
     clarity: { type: String, required: false },
     shape: { type: String, required: false },
     cut: { type: String, required: false },
+    p_description: { type: String, required: false },
     description: { type: String, required: false },
     images: { type: [String], required: false },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },

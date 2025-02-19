@@ -13,6 +13,11 @@ import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid2'
 import MenuItem from '@mui/material/MenuItem'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import Select from '@mui/material/Select'
+import Chip from '@mui/material/Chip'
+import Checkbox from '@mui/material/Checkbox'
+import ListItemText from '@mui/material/ListItemText'
+import Box from '@mui/material/Box'
 
 // Third-party Imports
 import classnames from 'classnames'
@@ -64,6 +69,7 @@ type AddJewelleryData = {
   sku?: string
   price?: string
   shape?: string
+  p_description?: any
   description?: any
   images?: any
 }
@@ -83,6 +89,7 @@ const initialAddressData: AddJewelleryProps['data'] = {
   size: [],
   sku: '',
   price: '',
+  p_description: '',
   description: '',
   shape: '',
   images: []
@@ -244,7 +251,8 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
       size: [],
       sku: '',
       price: '',
-      description: data?.description || ''
+      description: data?.description || '',
+      p_description: data?.p_description || ''
     }
   })
 
@@ -266,18 +274,39 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
     }
   })
 
+  const editor2: any = useEditor({
+    extensions: [
+      StarterKit,
+      Placeholder.configure({
+        placeholder: 'Write something here...'
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph']
+      }),
+      Underline
+    ],
+    immediatelyRender: false,
+    content: data?.p_description || '<p>Write your description here...</p>',
+    onUpdate: ({ editor }) => {
+      setValue('p_description', editor.getHTML())
+    }
+  })
+
   useEffect(() => {
     if (open && data) {
+      const normalizedSize = data.size?.length === 1 && data.size[0].includes(',') ? data.size[0].split(',') : data.size
+
       reset({
         _id: data._id || '',
         category: data.category || '',
         jewelleryName: data.jewelleryName || '',
         brand: data.brand || '',
         color: data.color || '',
-        size: typeof data.size === 'string' ? data.size.split(',') : Array.isArray(data.size) ? data.size : [],
+        size: normalizedSize || [],
         sku: data.sku || '',
         price: data.price || '',
-        description: data.description || ''
+        description: data.description || '',
+        p_description: data.p_description || ''
       })
     } else if (open) {
       // Reset to initial values if no data provided
@@ -290,7 +319,8 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
         size: [],
         sku: '',
         price: '',
-        description: ''
+        description: '',
+        p_description: ''
       })
     }
   }, [open, data, reset])
@@ -307,8 +337,13 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
       setValue('description', data.description)
     }
 
+    if (editor2 && data?.p_description) {
+      editor2.commands.setContent(data.p_description)
+      setValue('p_description', data.p_description)
+    }
+
     // return () => editor?.off('update'); // Clean up the event listener
-  }, [editor, data, setValue])
+  }, [editor, editor2, data, setValue])
 
   const onSubmit: SubmitHandler<any> = async (formData: any) => {
     try {
@@ -487,31 +522,40 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
             <Grid size={{ xs: 4 }}>
               <Controller
                 name='size'
-                rules={{ required: true }}
                 control={control}
+                rules={{ required: true }}
                 render={({ field }) => (
-                  <CustomTextField
-                    select
-                    fullWidth
-                    label='Size'
-                    variant='outlined'
-                    SelectProps={{
-                      multiple: true,
-                      value: Array.isArray(field.value) ? field.value : [],
-                      renderValue: (selected: any) => (Array.isArray(selected) ? selected.join(', ') : selected)
-                    }}
-                    {...field}
-                    error={Boolean(errors.size)}
-                  >
-                    {['S', 'M', 'L', 'XL'].map((size, index) => (
-                      <MenuItem key={index} value={size}>
-                        {size}
-                      </MenuItem>
-                    ))}
-                  </CustomTextField>
+                  <FormControl fullWidth error={Boolean(errors.size)}>
+                    <FormLabel>Size</FormLabel>
+                    <Select
+                      multiple
+                      value={field.value || []}
+                      onChange={field.onChange}
+                      renderValue={selected => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selected.map((value: any) => (
+                            <Chip key={value} label={value} size='small' />
+                          ))}
+                        </Box>
+                      )}
+                      sx={{
+                        '.MuiSelect-select': {
+                          minHeight: '32px', // Decrease height
+                          padding: '4px 8px' // Adjust padding for content
+                        }
+                      }}
+                    >
+                      {['S', 'M', 'L', 'XL'].map(size => (
+                        <MenuItem key={size} value={size}>
+                          <Checkbox checked={field.value?.includes(size)} />
+                          <ListItemText primary={size} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors.size && <FormHelperText>This field is required.</FormHelperText>}
+                  </FormControl>
                 )}
               />
-              {errors.size && <FormHelperText error>This field is required.</FormHelperText>}
             </Grid>
             <Grid size={{ xs: 4 }}>
               <Controller
@@ -548,6 +592,26 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
                   />
                 )}
               />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <Typography className='mbe-1'>Primary Description (Optional)</Typography>
+              <Card className='p-0 border shadow-none'>
+                <CardContent className='p-0'>
+                  <EditorToolbar editor={editor} />
+                  <Divider className='mli-6' />
+                  <Controller
+                    name='p_description'
+                    control={control}
+                    render={({ field }) => (
+                      <EditorContent
+                        editor={editor2}
+                        className='bs-[135px] overflow-y-auto flex [&_.ProseMirror]:border-0 [&_.ProseMirror]:outline-none'
+                        {...field}
+                      />
+                    )}
+                  />
+                </CardContent>
+              </Card>
             </Grid>
             <Grid size={{ xs: 12 }}>
               <Typography className='mbe-1'>Description (Optional)</Typography>

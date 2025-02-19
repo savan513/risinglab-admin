@@ -8,6 +8,7 @@ const jewellerySchema = new mongoose.Schema(
     size: { type: [String], required: false },
     sku: { type: String, required: false },
     price: { type: Number, required: false },
+    p_description: { type: String, required: false },
     description: { type: String, required: false },
     images: { type: [String], required: false },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
