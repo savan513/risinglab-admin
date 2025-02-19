@@ -597,7 +597,7 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
               <Typography className='mbe-1'>Primary Description (Optional)</Typography>
               <Card className='p-0 border shadow-none'>
                 <CardContent className='p-0'>
-                  <EditorToolbar editor={editor} />
+                  <EditorToolbar editor={editor2} />
                   <Divider className='mli-6' />
                   <Controller
                     name='p_description'
