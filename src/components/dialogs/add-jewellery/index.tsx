@@ -196,6 +196,87 @@ const EditorToolbar = ({ editor }: { editor: Editor | null }) => {
           })}
         />
       </CustomIconButton>
+      <CustomIconButton
+        {...(editor.isActive('heading', { level: 1 }) && { color: 'primary' })}
+        variant='tonal'
+        size='small'
+        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+      >
+        <i className={classnames('tabler-h-1', { 'text-textSecondary': !editor.isActive('heading', { level: 1 }) })} />
+      </CustomIconButton>
+      <CustomIconButton
+        {...(editor.isActive('heading', { level: 2 }) && { color: 'primary' })}
+        variant='tonal'
+        size='small'
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+      >
+        <i className={classnames('tabler-h-2', { 'text-textSecondary': !editor.isActive('heading', { level: 2 }) })} />
+      </CustomIconButton>
+      <CustomIconButton
+        {...(editor.isActive('heading', { level: 3 }) && { color: 'primary' })}
+        variant='tonal'
+        size='small'
+        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+      >
+        <i className={classnames('tabler-h-3', { 'text-textSecondary': !editor.isActive('heading', { level: 3 }) })} />
+      </CustomIconButton>
+      <CustomIconButton
+        {...(editor.isActive('heading', { level: 4 }) && { color: 'primary' })}
+        variant='tonal'
+        size='small'
+        onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+      >
+        <i className={classnames('tabler-h-4', { 'text-textSecondary': !editor.isActive('heading', { level: 4 }) })} />
+      </CustomIconButton>
+      <CustomIconButton
+        {...(editor.isActive('heading', { level: 5 }) && { color: 'primary' })}
+        variant='tonal'
+        size='small'
+        onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
+      >
+        <i className={classnames('tabler-h-5', { 'text-textSecondary': !editor.isActive('heading', { level: 5 }) })} />
+      </CustomIconButton>
+      <CustomIconButton
+        {...(editor.isActive('bulletList') && { color: 'primary' })}
+        variant='tonal'
+        size='small'
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+      >
+        <i className={classnames('tabler-list', { 'text-textSecondary': !editor.isActive('bulletList') })} />
+      </CustomIconButton>
+      <CustomIconButton
+        {...(editor.isActive('blockquote') && { color: 'primary' })}
+        variant='tonal'
+        size='small'
+        onClick={() => editor.chain().focus().toggleBlockquote().run()}
+      >
+        <i className={classnames('tabler-quote', { 'text-textSecondary': !editor.isActive('blockquote') })} />
+      </CustomIconButton>
+      <CustomIconButton
+        {...(editor.isActive('code') && { color: 'primary' })}
+        variant='tonal'
+        size='small'
+        onClick={() => editor.chain().focus().toggleCode().run()}
+      >
+        <i className={classnames('tabler-code', { 'text-textSecondary': !editor.isActive('code') })} />
+      </CustomIconButton>
+      <CustomIconButton
+        disabled={!editor.can().chain().focus().undo().run()}
+        variant='tonal'
+        size='small'
+        onClick={() => editor.chain().focus().undo().run()}
+      >
+        <i className='tabler-arrow-back-up' />
+      </CustomIconButton>
+
+      <CustomIconButton
+        disabled={!editor.can().chain().focus().redo().run()}
+        variant='tonal'
+        size='small'
+        onClick={() => editor.chain().focus().redo().run()}
+      >
+        <i className='tabler-arrow-forward-up' />
+      </CustomIconButton>
     </div>
   )
 }
@@ -595,7 +676,7 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
             </Grid>
             <Grid size={{ xs: 12 }}>
               <Typography className='mbe-1'>Primary Description (Optional)</Typography>
-              <Card className='p-0 border shadow-none'>
+              <Card className='p-0 border shadow-none w-full'>
                 <CardContent className='p-0'>
                   <EditorToolbar editor={editor2} />
                   <Divider className='mli-6' />
@@ -605,7 +686,10 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
                     render={({ field }) => (
                       <EditorContent
                         editor={editor2}
-                        className='bs-[135px] overflow-y-auto flex [&_.ProseMirror]:border-0 [&_.ProseMirror]:outline-none'
+                        className='w-full h-full flex-grow overflow-y-auto 
+                       [&_.ProseMirror]:border-0 [&_.ProseMirror]:outline-none 
+                       [&_.ProseMirror]:w-full [&_.ProseMirror]:min-h-[135px] 
+                       [&_.ProseMirror]:h-full [&_.ProseMirror]:p-4'
                         {...field}
                       />
                     )}
@@ -625,7 +709,10 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
                     render={({ field }) => (
                       <EditorContent
                         editor={editor}
-                        className='bs-[135px] overflow-y-auto flex [&_.ProseMirror]:border-0 [&_.ProseMirror]:outline-none'
+                        className='w-full h-full flex-grow overflow-y-auto 
+                       [&_.ProseMirror]:border-0 [&_.ProseMirror]:outline-none 
+                       [&_.ProseMirror]:w-full [&_.ProseMirror]:min-h-[135px] 
+                       [&_.ProseMirror]:h-full [&_.ProseMirror]:p-4'
                         {...field}
                       />
                     )}
