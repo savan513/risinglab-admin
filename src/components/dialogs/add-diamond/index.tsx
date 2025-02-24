@@ -456,6 +456,14 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
             setOpen(false)
             setDiamondCategoryData(initialAddressData)
             reset()
+
+            if (editor) {
+              editor.commands.setContent('<p>Write your description here...</p>')
+            }
+
+            if (editor2) {
+              editor2.commands.setContent('<p>Write your description here...</p>')
+            }
           }
         })
       } else {
@@ -464,6 +472,14 @@ const AddDiamondCategory = ({ open, setOpen, data }: AddDiamondCategoryProps) =>
             setOpen(false)
             setDiamondCategoryData(initialAddressData)
             reset()
+
+            if (editor) {
+              editor.commands.setContent('<p>Write your description here...</p>')
+            }
+
+            if (editor2) {
+              editor2.commands.setContent('<p>Write your description here...</p>')
+            }
           }
         })
       }

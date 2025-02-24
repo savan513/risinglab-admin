@@ -457,6 +457,14 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
             reset()
             setOpen(false)
             setJewelleryData(initialAddressData)
+
+            if (editor) {
+              editor.commands.setContent('<p>Write your description here...</p>')
+            }
+
+            if (editor2) {
+              editor2.commands.setContent('<p>Write your description here...</p>')
+            }
           }
         })
       } else {
@@ -465,6 +473,14 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
             reset()
             setOpen(false)
             setJewelleryData(initialAddressData)
+
+            if (editor) {
+              editor.commands.setContent('<p>Write your description here...</p>')
+            }
+
+            if (editor2) {
+              editor2.commands.setContent('<p>Write your description here...</p>')
+            }
           }
         })
       }
