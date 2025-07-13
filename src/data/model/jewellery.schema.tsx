@@ -4,7 +4,7 @@ const jewellerySchema = new mongoose.Schema(
   {
     jewelleryName: { type: String, required: true },
     brand: { type: String, required: true },
-    color: { type: String, required: true },
+    color: { type: [String], required: true }, // Changed to array of strings
     size: { type: [String], required: false },
     sku: { type: String, required: false },
     price: { type: Number, required: false },

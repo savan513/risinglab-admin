@@ -27,6 +27,7 @@ import { Underline } from '@tiptap/extension-underline'
 import { Placeholder } from '@tiptap/extension-placeholder'
 import { TextAlign } from '@tiptap/extension-text-align'
 import type { Editor } from '@tiptap/core'
+import CreatableSelect from 'react-select/creatable'
 
 // Type Import
 import {
@@ -64,7 +65,7 @@ type AddJewelleryData = {
   category?: any
   jewelleryName?: string
   brand?: string
-  color?: string
+  color?: any
   size?: any
   sku?: string
   price?: string
@@ -85,7 +86,7 @@ const initialAddressData: AddJewelleryProps['data'] = {
   category: '',
   jewelleryName: '',
   brand: '',
-  color: '',
+  color: [],
   size: [],
   sku: '',
   price: '',
@@ -281,6 +282,66 @@ const EditorToolbar = ({ editor }: { editor: Editor | null }) => {
   )
 }
 
+const CreatableSelectField = ({ name, control, label, options, formatOptionLabel, required = false }: any) => {
+  return (
+    <FormControl fullWidth>
+      <FormLabel>
+        {label} {required && '*'}
+      </FormLabel>
+      <Controller
+        name={name}
+        control={control}
+        rules={{ required }}
+        render={({ field }) => (
+          <CreatableSelect
+            {...field}
+            isMulti
+            isClearable
+            options={options}
+            className='react-select'
+            classNamePrefix='select'
+            placeholder={`Select or create ${label.toLowerCase()}...`}
+            formatOptionLabel={formatOptionLabel}
+            onChange={val => {
+              const values = val
+                ? val.map(v => {
+                    const cleanValue = v.value.split(',')[0].trim().toLowerCase()
+
+                    return cleanValue
+                  })
+                : []
+
+              field.onChange(values)
+            }}
+            value={
+              Array.isArray(field.value)
+                ? field.value.map(value => ({
+                    label: value.charAt(0).toUpperCase() + value.slice(1),
+                    value: value
+                  }))
+                : []
+            }
+            styles={{
+              control: base => ({
+                ...base,
+                minHeight: '56px'
+              }),
+              menu: base => ({
+                ...base,
+                zIndex: 9999
+              }),
+              container: base => ({
+                ...base,
+                marginTop: '8px'
+              })
+            }}
+          />
+        )}
+      />
+    </FormControl>
+  )
+}
+
 const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
   // Vars
   const initialSelected: string = customInputData?.find(item => item.isSelected)?.value || ''
@@ -328,7 +389,7 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
       category: '',
       jewelleryName: '',
       brand: '',
-      color: '',
+      color: [],
       size: [],
       sku: '',
       price: '',
@@ -377,12 +438,15 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
     if (open && data) {
       const normalizedSize = data.size?.length === 1 && data.size[0].includes(',') ? data.size[0].split(',') : data.size
 
+      const normalizedColor: any =
+        data.color?.length === 1 && data.color[0].includes(',') ? data.color[0].split(',') : data.color
+
       reset({
         _id: data._id || '',
         category: data.category || '',
         jewelleryName: data.jewelleryName || '',
         brand: data.brand || '',
-        color: data.color || '',
+        color: normalizedColor || [],
         size: normalizedSize || [],
         sku: data.sku || '',
         price: data.price || '',
@@ -396,7 +460,7 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
         category: '',
         jewelleryName: '',
         brand: '',
-        color: '',
+        color: [],
         size: [],
         sku: '',
         price: '',
@@ -558,46 +622,52 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
             </Grid>
 
             <Grid size={{ xs: 12, sm: 4 }}>
-              <Controller
+              <CreatableSelectField
                 name='color'
                 control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    select
-                    fullWidth
-                    label='Color'
-                    variant='outlined'
-                    {...field}
-                    error={Boolean(errors.color)}
-                  >
-                    {[
-                      { label: 'Red', value: 'red' },
-                      { label: 'Blue', value: 'blue' },
-                      { label: 'Green', value: 'green' },
-                      { label: 'Yellow', value: 'yellow' },
-                      { label: 'Black', value: 'black' },
-                      { label: 'White', value: 'white' },
-                      { label: 'Pink', value: 'pink' }
-                    ].map((color, index) => (
-                      <MenuItem key={index} value={color.value}>
-                        <span className='flex items-center gap-2'>
-                          <span
-                            className='w-4 h-4 rounded-full'
-                            style={{
-                              backgroundColor: color.value,
-                              display: 'inline-block',
-                              border: '1px solid #ddd'
-                            }}
-                          />
-                          <span style={{ textTransform: 'capitalize' }}>{color.label}</span>
-                        </span>
-                      </MenuItem>
-                    ))}
-                  </CustomTextField>
+                label='Color'
+                required={true}
+                options={[
+                  { label: 'Red', value: 'red' },
+                  { label: 'Blue', value: 'blue' },
+                  { label: 'Green', value: 'green' },
+                  { label: 'Yellow', value: 'yellow' },
+                  { label: 'Black', value: 'black' },
+                  { label: 'White', value: 'white' },
+                  { label: 'Pink', value: 'pink' }
+                ]}
+                formatOptionLabel={({ label, value }: any) => (
+                  <span className='flex items-center gap-2'>
+                    <span
+                      className='w-4 h-4 rounded-full'
+                      style={{
+                        backgroundColor: value,
+                        display: 'inline-block',
+                        border: '1px solid #ddd'
+                      }}
+                    />
+                    <span style={{ textTransform: 'capitalize' }}>{label}</span>
+                  </span>
                 )}
               />
-              {errors.color && <FormHelperText error>This field is required.</FormHelperText>}
+              {errors.color && <FormHelperText error>Please select at least one color.</FormHelperText>}
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 4 }}>
+              <CreatableSelectField
+                name='size'
+                control={control}
+                label='Size'
+                options={[
+                  { label: 'Small', value: 'small' },
+                  { label: 'Medium', value: 'medium' },
+                  { label: 'Large', value: 'large' },
+                  { label: 'XL', value: 'xl' },
+                  { label: '2XL', value: '2xl' }
+                ]}
+                formatOptionLabel={({ label }: any) => <span style={{ textTransform: 'capitalize' }}>{label}</span>}
+              />
+              {errors.size && <FormHelperText error>Please select at least one size.</FormHelperText>}
             </Grid>
             <Grid size={{ xs: 12, sm: 4 }}>
               <Controller
@@ -613,44 +683,6 @@ const AddJewellery = ({ open, setOpen, data }: AddJewelleryProps) => {
                     {...field}
                     {...(errors.brand && { error: true, helperText: 'This field is required.' })}
                   />
-                )}
-              />
-            </Grid>
-            <Grid size={{ xs: 4 }}>
-              <Controller
-                name='size'
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <FormControl fullWidth error={Boolean(errors.size)}>
-                    <FormLabel>Size</FormLabel>
-                    <Select
-                      multiple
-                      value={field.value || []}
-                      onChange={field.onChange}
-                      renderValue={selected => (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {selected.map((value: any) => (
-                            <Chip key={value} label={value} size='small' />
-                          ))}
-                        </Box>
-                      )}
-                      sx={{
-                        '.MuiSelect-select': {
-                          minHeight: '32px', // Decrease height
-                          padding: '4px 8px' // Adjust padding for content
-                        }
-                      }}
-                    >
-                      {['S', 'M', 'L', 'XL'].map(size => (
-                        <MenuItem key={size} value={size}>
-                          <Checkbox checked={field.value?.includes(size)} />
-                          <ListItemText primary={size} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.size && <FormHelperText>This field is required.</FormHelperText>}
-                  </FormControl>
                 )}
               />
             </Grid>

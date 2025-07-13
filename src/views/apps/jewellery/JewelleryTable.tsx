@@ -357,7 +357,11 @@ const JewelleryTable = () => {
       }),
       columnHelper.accessor('color', {
         header: 'color',
-        cell: ({ row }) => <Typography>{row.original.color.toUpperCase()}</Typography>
+        cell: ({ row }: any) => (
+          <Typography>
+            {row.original.color.map((color: any) => color.charAt(0).toUpperCase() + color.slice(1)).join(', ')}
+          </Typography>
+        )
       }),
       columnHelper.accessor('size', {
         header: 'Size',
