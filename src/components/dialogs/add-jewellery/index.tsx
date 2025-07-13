@@ -284,52 +284,61 @@ const EditorToolbar = ({ editor }: { editor: Editor | null }) => {
 
 const CreatableSelectField = ({ name, control, label, options, formatOptionLabel, required = false }: any) => {
   return (
-    <Controller
-      name={name}
-      control={control}
-      rules={{ required }}
-      render={({ field }) => (
-        <CreatableSelect
-          {...field}
-          isMulti
-          isClearable
-          options={options}
-          className='react-select'
-          classNamePrefix='select'
-          placeholder={`Select or create ${label.toLowerCase()}...`}
-          formatOptionLabel={formatOptionLabel}
-          onChange={val => {
-            const values = val
-              ? val.map(v => {
-                  const cleanValue = v.value.split(',')[0].trim().toLowerCase()
+    <FormControl fullWidth>
+      <FormLabel>
+        {label} {required && '*'}
+      </FormLabel>
+      <Controller
+        name={name}
+        control={control}
+        rules={{ required }}
+        render={({ field }) => (
+          <CreatableSelect
+            {...field}
+            isMulti
+            isClearable
+            options={options}
+            className='react-select'
+            classNamePrefix='select'
+            placeholder={`Select or create ${label.toLowerCase()}...`}
+            formatOptionLabel={formatOptionLabel}
+            onChange={val => {
+              const values = val
+                ? val.map(v => {
+                    const cleanValue = v.value.split(',')[0].trim().toLowerCase()
 
-                  return cleanValue
-                })
-              : []
+                    return cleanValue
+                  })
+                : []
 
-            field.onChange(values)
-          }}
-          value={
-            Array.isArray(field.value)
-              ? field.value.map(value => ({
-                  label: value.charAt(0).toUpperCase() + value.slice(1),
-                  value: value
-                }))
-              : []
-          }
-          styles={{
-            control: base => ({
-              ...base,
-              minHeight: '56px'
-            }),
-            menu: base => ({
-              ...base,
-              zIndex: 9999
-            })
-          }}
-        />
-      )}
-    />
+              field.onChange(values)
+            }}
+            value={
+              Array.isArray(field.value)
+                ? field.value.map(value => ({
+                    label: value.charAt(0).toUpperCase() + value.slice(1),
+                    value: value
+                  }))
+                : []
+            }
+            styles={{
+              control: base => ({
+                ...base,
+                minHeight: '56px'
+              }),
+              menu: base => ({
+                ...base,
+                zIndex: 9999
+              }),
+              container: base => ({
+                ...base,
+                marginTop: '8px'
+              })
+            }}
+          />
+        )}
+      />
+    </FormControl>
   )
 }
 
